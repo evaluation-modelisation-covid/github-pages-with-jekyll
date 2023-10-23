@@ -1,8 +1,8 @@
 ---
-title: ""
+title: "Méthodologie"
 ---
 
-# Méthodologie
+# Notre méthodologie
 
 Les courbes présentées sur le site sont issues des scénarios de modélisations ayant impacté les politiques publiques mises en place en France. Elles ont principalement été produites par l'Institut Pasteur et l'Inserm. Les données n'étant à notre connaissance pas disponibles en accès libre, nous les avons extraites à partir des courbes des rapport en utilisant [WebPlotDigitilizer](https://automeris.io/WebPlotDigitizer/).
 
@@ -21,9 +21,9 @@ La liste exhaustive des scénarios de modélisation, et de leur inclusion ou non
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Modélisations de l'Institut Pasteur**
+**Modélisations de l'Institut Pasteur** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -53,9 +53,9 @@ La liste exhaustive des scénarios de modélisation, et de leur inclusion ou non
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Modélisations de l'INSERM**
+**Modélisations de l'INSERM** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -65,9 +65,9 @@ La liste exhaustive des scénarios de modélisation, et de leur inclusion ou non
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Modélisations de l'Imperial College**
+**Modélisations de l'Imperial College** *(cliquer pour dérouler)*
 
 </summary>
 

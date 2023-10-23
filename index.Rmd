@@ -42,12 +42,21 @@ alpha_admission <- .3
 ```
 
 ```{r loading_true _data}
-data_gouv_new_hosp_rea <- 
+# IF NO INTERNET CONNECTION OR LINK BROKEN, UNCOMMENT BELOW TO LOAD LOCAL DATA
+data_gouv_new_hosp_rea <-
   read.csv(url("https://www.data.gouv.fr/fr/datasets/r/6fadff46-9efd-4c53-942a-54aca783c30c"), sep=";") %>%
   mutate(date = as.Date(jour))
-data_gouv_beds_hosp_rea <- 
+data_gouv_beds_hosp_rea <-
   read.csv(url("https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7"), sep=";")  %>%
   mutate(date = as.Date(jour))
+
+#TO UNCOMMENT
+# local_file_path <- "data/0_real_data_back_up/" # local file path
+# data_gouv_new_hosp_rea <- read.csv2(paste0(local_file_path, "covid-hospit-incid-2023-03-31-18h01.csv"), sep = ";") %>%
+#   mutate(date = as.Date(jour))
+# data_gouv_beds_hosp_rea <- read.csv2(paste0(local_file_path, "covid-hospit-2023-03-31-18h01.csv"), sep = ";") %>%
+#   mutate(date = as.Date(jour))
+
 
 #Lits occupés en réanimation, hospitalisation et hospitalisation conventionnelle
 true_data_beds_hosp_rea <- data_gouv_beds_hosp_rea %>%
@@ -152,14 +161,66 @@ f_graph <-
   }
 ```
 
+```{r f_graph_unsmoothed}
+#changing function to unsmoothed scenarios
+f_graph_unsmoothed <- 
+  function(
+    true_data, scenarios, 
+    variable, date_adjust, value_adjust,
+    x_label_realite, y_label_realite,
+    x_label_scenario, y_label_scenario,
+    x_label_publication, y_label_publication,
+    x_min, x_max, y_max,
+    str_title, str_subtitle
+  ){
+    scenarios %>%
+      gather(key=pasteur, value = value, -date) %>%
+      ggplot(
+        aes(
+          date+date_adjust, value+value_adjust, 
+          group=pasteur, color="scénarios"
+          )
+        ) + 
+      geom_line(size=1) + 
+      geom_line(
+        data= true_data, 
+        aes(
+          x=date, y=!!as.symbol(variable), 
+          color = "réalité", group="réalité"
+          ),
+        size = 1
+        ) +
+      annotate(
+        'text', x = as.Date(x_label_realite), y = y_label_realite, label = "réalité", 
+        color = myred, fontface = "bold", family = "Times New Roman"
+        ) + 
+      annotate(
+        'text', x = as.Date(x_label_scenario), y = y_label_scenario, label = "scénarios", 
+        color = mygrey, fontface = "bold", family = "Times New Roman"
+        ) + 
+      geom_vline(
+        xintercept = as.Date(x_label_publication), linetype="dashed"
+      ) +
+      annotate(
+        'text', x = as.Date(x_label_publication)-1, y = y_label_publication, label = "date de\npublication", 
+        color = "black", fontface = "italic", family = "Times New Roman", hjust=1
+      ) +
+      xlim(date(x_min), date(x_max)) + ylim(0, y_max) + g_theme +
+      labs(
+        title = str_title,
+        subtitle = str_subtitle,
+        caption = "\ntwitter : @Covid_Scenarios"
+        )
+  }
+```
 
 # Avant d'explorer les modélisations
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Quel intérêt à étudier la fiabilité des scénarios de modélisations ?** ***(cliquer pour dérouler)***
+**Quel intérêt à étudier la fiabilité des scénarios de modélisations ?** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -177,9 +238,9 @@ Une explication plus détaillée est disponible sur la page [Impact](https://eva
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**L'intérêt des modélisations n'est-il pas d'empêcher qu'elles se produisent ?** ***(cliquer pour dérouler)***
+**L'intérêt des modélisations n'est-il pas d'empêcher qu'elles se produisent ?** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -211,9 +272,9 @@ A titre d'exemple, l'Institut Pasteur a produit des scénarios le 7 juillet 2021
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Contexte** ***(cliquer pour dérouler)***
+**Contexte** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -229,9 +290,9 @@ Cependant, un pays permet de tester la validité des scénarios de modélisation
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Comparaison à la réalité** ***(cliquer pour dérouler)***
+**Comparaison à la réalité** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -289,9 +350,9 @@ knitr::include_graphics("images/Imperial_Sweden/Sweden_deaths.svg")
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Impact politique et médiatique** ***(cliquer pour dérouler)***
+**Impact politique et médiatique** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -315,9 +376,9 @@ Si la source de ce chiffre n'est pas précisée, elle correspond bien au scénar
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Discussion sur les hypothèses des scénarios (technique)** ***(cliquer pour dérouler)***
+**Discussion sur les hypothèses des scénarios (technique)** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -352,9 +413,9 @@ Bien que n'étant pas réalistes, nous avons fait le choix de représenter les s
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Contexte** ***(cliquer pour dérouler)***
+**Contexte** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -364,9 +425,9 @@ Le **29 avril 2020**, pendant le premier confinement, [un article du journal Les
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Comparaison à la réalité** ***(cliquer pour dérouler)***
+**Comparaison à la réalité** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -392,9 +453,9 @@ f_graph(
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Impact politique et médiatique** ***(cliquer pour dérouler)***
+**Impact politique et médiatique** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -408,9 +469,9 @@ La confidentialité du rapport dont sont issues ces courbes **pose la question d
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Discussion sur les hypothèses des scénarios (technique)** ***(cliquer pour dérouler)***
+**Discussion sur les hypothèses des scénarios (technique)** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -422,9 +483,9 @@ Les modélisations n'étant pas publiques, il ne nous a pas été possible d'ét
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Contexte** ***(cliquer pour dérouler)***
+**Contexte** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -444,9 +505,9 @@ Le **30 octobre, l'Institut Pasteur produit une mise à jour** de ses scénarios
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Comparaison à la réalité** ***(cliquer pour dérouler)***
+**Comparaison à la réalité** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -504,9 +565,9 @@ f_graph(
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Impact politique et médiatique** ***(cliquer pour dérouler)***
+**Impact politique et médiatique** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -518,9 +579,9 @@ Ces modélisations ont également été largement reprises dans la presse: ["Deu
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Discussion sur les hypothèses des scénarios (technique)** ***(cliquer pour dérouler)***
+**Discussion sur les hypothèses des scénarios (technique)** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -532,9 +593,9 @@ Le rapport n'ayant pas été rendu public, il ne nous a pas été possible d'exp
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Contexte** ***(cliquer pour dérouler)***
+**Contexte** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -550,9 +611,9 @@ De premiers confinements régionaux seront mis en place le 20 mars, suivis plus 
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Comparaison à la réalité : INSERM** ***(cliquer pour dérouler)***
+**Comparaison à la réalité : INSERM** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -561,8 +622,6 @@ De premiers confinements régionaux seront mis en place le 20 mars, suivis plus 
 Les scénarios de l'INSERM ([ici](https://www.epicx-lab.com/uploads/9/6/9/4/9694133/inserm_covid-19-voc_dominance-20210116.pdf), [ici](https://www.epicx-lab.com/uploads/9/6/9/4/9694133/inserm-covid-19-voc-lockdown-20210202.pdf) et [ici](https://www.epicx-lab.com/uploads/9/6/9/4/9694133/inserm_covid-19-voc_socialdistancing-20210214.pdf)) réalisés pendant 1 mois **pointent tous vers une augmentation exponentielle** des admissions à l'hôpital. La réalité sera une légère diminution suivi d'une augmentation ramenant environ au niveau initial. Quasiment tous les scénarios dépassent les 30 000 admissions hebdomadaires avant la mi-mars sans signe de ralentissement de la dynamique, alors que la réalité se trouvait aux alentours de 10 000, soit 3 fois moins. **Les scénarios le plus optimistes surestiment** les hospitalisation d'un **facteur 50-100%**.
 
 </details>
-
-### {.tabset .tabset-fade .tabset-pills}
 
 ```{r fig.show='animate', animation.hook='gifski', dev='png'}
 #16 janvier
@@ -613,9 +672,9 @@ f_graph(
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Comparaison à la réalité : l'Institut Pasteur** ***(cliquer pour dérouler)***
+**Comparaison à la réalité : l'Institut Pasteur** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -683,9 +742,9 @@ f_graph(
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Auto-évaluation de l'Institut Pasteur** ***(cliquer pour dérouler)***
+**Auto-évaluation de l'Institut Pasteur** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -707,9 +766,9 @@ Cette affirmation est **accompagnée de la figure ci-dessous**. Un an après le 
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Impact politique et médiatique** ***(cliquer pour dérouler)***
+**Impact politique et médiatique** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -729,9 +788,9 @@ Ces résultats ont également été présentés dans un [rapport spécial du Con
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Discussion sur les hypothèses des scénarios (technique)** ***(cliquer pour dérouler)***
+**Discussion sur les hypothèses des scénarios (technique)** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -778,9 +837,9 @@ Les rapport INSERM du 16 janvier et 2 février méritent précision, car il y es
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Contexte** ***(cliquer pour dérouler)***
+**Contexte** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -792,9 +851,9 @@ Une auto-évaluation informelle du rapport du 21 mai a été publiée [sur le co
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Comparaison à la réalité** ***(cliquer pour dérouler)***
+**Comparaison à la réalité** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -880,9 +939,9 @@ f_graph(
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Auto-évaluation de l'Institut Pasteur** ***(cliquer pour dérouler)***
+**Auto-évaluation de l'Institut Pasteur** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -898,9 +957,9 @@ knitr::include_graphics("images/Pasteur_2021_Avril/Cauchemez.png")
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Impact politique et médiatique** ***(cliquer pour dérouler)***
+**Impact politique et médiatique** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -922,9 +981,9 @@ La diminution s'est produite la semaine suivante, et 50 jours plus tard (le 15 j
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Discussion sur les hypothèses des scénarios (technique)** ***(cliquer pour dérouler)***
+**Discussion sur les hypothèses des scénarios (technique)** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -960,9 +1019,9 @@ Dans les 2 cas nous arrêtons la comparaison à la mi-juin, [lorsque l'apparitio
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Contexte ** ***(cliquer pour dérouler)***
+**Contexte ** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -976,9 +1035,9 @@ Pour remédier à cela, l'Institut Pasteur a publié 2 nouveaux rapports, les [2
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Comparaison à la réalité (cliquer pour dérouler)** ***(cliquer pour dérouler)***
+**Comparaison à la réalité (cliquer pour dérouler)** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1129,9 +1188,9 @@ f_graph(
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Impact politique et médiatique (cliquer pour dérouler) ** ***(cliquer pour dérouler)***
+**Impact politique et médiatique (cliquer pour dérouler) ** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1150,9 +1209,9 @@ Il est intéressant de noter que le Royaume-Uni a été confronté à la même s
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Discussion sur les hypothèses des scénarios (technique)** ***(cliquer pour dérouler)***
+**Discussion sur les hypothèses des scénarios (technique)** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1208,9 +1267,9 @@ Par ailleurs un certain nombre d'hypothèses étaient communes aux 2 scénarios 
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Contexte** ***(cliquer pour dérouler)***
+**Contexte** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1222,9 +1281,9 @@ Nous présentons une comparaison entre scénarios de modélisation et réalité 
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Comparaison à la réalité** ***(cliquer pour dérouler)***
+**Comparaison à la réalité** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1242,9 +1301,9 @@ Le **pic réel se trouve sous le scénario le plus optimiste**, les **scénarios
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Impact politique et médiatique** ***(cliquer pour dérouler)***
+**Impact politique et médiatique** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1260,9 +1319,9 @@ Le fait que les modélisations aient largement surestimées l'impact de la réou
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Contexte** ***(cliquer pour dérouler)***
+**Contexte** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1272,9 +1331,9 @@ Dans un contexte notamment marqué par la généralisation du pass sanitaire, l'
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Comparaison à la réalité** ***(cliquer pour dérouler)***
+**Comparaison à la réalité** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1310,9 +1369,9 @@ f_graph(
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Impact politique et médiatique** ***(cliquer pour dérouler)***
+**Impact politique et médiatique** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1322,9 +1381,9 @@ Ces modélisations ont été [reprises](https://www.huffingtonpost.fr/entry/pass
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Discussion sur les hypothèses des scénarios (technique)** ***(cliquer pour dérouler)***
+**Discussion sur les hypothèses des scénarios (technique)** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1355,9 +1414,9 @@ Comme nous l'avons déjà dit, le "relâchement des gestes barrières" est une h
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Contexte** ***(cliquer pour dérouler)***
+**Contexte** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1373,9 +1432,9 @@ Nous comparons ici la projection du modèle 2 semaines avant le pic de la second
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Comparaison à la réalité** ***(cliquer pour dérouler)***
+**Comparaison à la réalité** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1473,9 +1532,9 @@ ggplot(data = scenario, aes(x = date)) +
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Discussion sur les hypothèses des scénarios (technique)** ***(cliquer pour dérouler)***
+**Discussion sur les hypothèses des scénarios (technique)** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1487,9 +1546,9 @@ Il n'y pas de respect des hypothèses à vérifier pour ces projections. L'horiz
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Contexte** ***(cliquer pour dérouler)***
+**Contexte** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1503,13 +1562,13 @@ Nous analysons également un [rapport publié le 15 février](https://modelisati
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Comparaison à la réalité** ***(cliquer pour dérouler)***
+**Comparaison à la réalité** *(cliquer pour dérouler)*
 
 </summary>
 
-Le rapport distinguait des scénarios "probables" (en trais pleins) de scénarios "moins probables" (en pointillés). Il distinguait également une hypothèses d'efficacité à 6 mois de la dose de rappel contre les infections de 85% ou 60%.
+Le rapport distinguait des scénarios "probables" de scénarios "moins probables". Il distinguait également une hypothèses d'efficacité à 6 mois de la dose de rappel contre les infections de 85% ou 60%.
 
 La réalité est une efficacité initiale de 50% puis 0% au-delà de 3 mois (voir paragraphe "Auto-évaluation de l'Institut Pasteur"), excluant a minima le scénario 85%. Mais l'Institut Pasteur l'utilisant pour affirmer dans son rapport rétrospectif que "les dynamiques prédites et observées des admissions quotidiennes sont proches", nous avons fait le choix de le représenter.
 
@@ -1521,66 +1580,12 @@ Le pic de lits de soins critiques interviendra quelques jours après la publicat
 
 #### Hypothèse (moins) fausse : efficacité vaccinale 60%
 
-```{r}
-#changing function to unsmoothed scenarios
-f_graph <- 
-  function(
-    true_data, scenarios, 
-    variable, date_adjust, value_adjust,
-    x_label_realite, y_label_realite,
-    x_label_scenario, y_label_scenario,
-    x_label_publication, y_label_publication,
-    x_min, x_max, y_max,
-    str_title, str_subtitle
-  ){
-    scenarios %>%
-      gather(key=pasteur, value = value, -date) %>%
-      ggplot(
-        aes(
-          date+date_adjust, value+value_adjust, 
-          group=pasteur, color="scénarios"
-          )
-        ) + 
-      geom_line(size=1) + 
-      geom_line(
-        data= true_data, 
-        aes(
-          x=date, y=!!as.symbol(variable), 
-          color = "réalité", group="réalité"
-          ),
-        size = 1
-        ) +
-      annotate(
-        'text', x = as.Date(x_label_realite), y = y_label_realite, label = "réalité", 
-        color = myred, fontface = "bold", family = "Times New Roman"
-        ) + 
-      annotate(
-        'text', x = as.Date(x_label_scenario), y = y_label_scenario, label = "scénarios", 
-        color = mygrey, fontface = "bold", family = "Times New Roman"
-        ) + 
-      geom_vline(
-        xintercept = as.Date(x_label_publication), linetype="dashed"
-      ) +
-      annotate(
-        'text', x = as.Date(x_label_publication)-1, y = y_label_publication, label = "date de\npublication", 
-        color = "black", fontface = "italic", family = "Times New Roman", hjust=1
-      ) +
-      xlim(date(x_min), date(x_max)) + ylim(0, y_max) + g_theme +
-      labs(
-        title = str_title,
-        subtitle = str_subtitle,
-        caption = "\ntwitter : @Covid_Scenarios"
-        )
-  }
-```
-
-
 ```{r fig.show='animate', animation.hook='gifski', dev='png'}
 #faible efficacité vaccinale, probable
 scenario <- read.csv("data/2022_01_07_Pasteur/beds_SC_low_VE.csv", sep=";") %>%
   mutate(date = as.Date(date, format = "%d/%m/%Y", optional = T))
 
-f_graph(
+f_graph_unsmoothed(
   true_data_beds_hosp_rea, scenario, 
   "rea", 0, 0,
   "2022-01-20", 2800, #réalité label
@@ -1595,7 +1600,7 @@ f_graph(
 scenario <- read.csv("data/2022_01_07_Pasteur/beds_SC_peu_probable_low_VE.csv", sep=";") %>%
   mutate(date = as.Date(date, format = "%d/%m/%Y", optional = T)) 
 
-f_graph(
+f_graph_unsmoothed(
   true_data_beds_hosp_rea, scenario, 
   "rea", 0, 0,
   "2022-01-20", 2800, #réalité label
@@ -1618,7 +1623,7 @@ f_graph(
 scenario <- read.csv("data/2022_01_07_Pasteur/beds_SC_high_VE.csv", sep=";") %>%
   mutate(date = as.Date(date, format = "%d/%m/%Y", optional = T))
 
-f_graph(
+f_graph_unsmoothed(
   true_data_beds_hosp_rea, scenario, 
   "rea", 0, 0,
   "2022-01-20", 2800, #réalité label
@@ -1637,7 +1642,7 @@ f_graph(
 scenario <- read.csv("data/2022_01_07_Pasteur/beds_SC_peu_probable_high_VE.csv", sep=";") %>%
   mutate(date = as.Date(date, format = "%d/%m/%Y", optional = T))
 
-f_graph(
+f_graph_unsmoothed(
   true_data_beds_hosp_rea, scenario, 
   "rea", 0, 0,
   "2022-01-20", 2800, #réalité label
@@ -1663,9 +1668,9 @@ f_graph(
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Impact politique et médiatique** ***(cliquer pour dérouler)***
+**Impact politique et médiatique** *(cliquer pour dérouler)*
 
 </summary>
 
@@ -1687,9 +1692,9 @@ Le rapport d'auto-évaluation de l'Institut Pasteur a également été cité dan
 
 <details>
 
-<summary>
+<summary style="cursor: pointer; padding: 3px;">
 
-**Auto-évaluation de l'Institut Pasteur et hypothèses** ***(cliquer pour dérouler)***
+**Auto-évaluation de l'Institut Pasteur et hypothèses** *(cliquer pour dérouler)*
 
 </summary>
 
