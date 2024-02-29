@@ -1,0 +1,237 @@
+---
+title: "Influence des modèles"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, message=F, warning=F, fig.align = "center",  dev='svg')
+
+#loading relevant packages
+library(tidyr)
+library(tidyverse) #mainly for reading files functions
+library(dplyr)
+library(ggplot2) #for ggplot graphs
+
+theme_set(
+  theme_classic() +
+  theme(
+        legend.title = element_blank(),
+        panel.grid.major.y = element_line(),
+        text = element_text(family = "Times New Roman"),
+        plot.title = element_text(face="bold"),
+        axis.title.x = element_blank())
+  )
+```
+
+Ici, nous revenons sur quelques articles publiés dans de presitgieuses revues scientifiques, qui ont eu une influence majeure sur la perception de l'efficacité des mesures sanitaires.
+
+Nous nous concentrons sur leurs prédictions relatives à la Suède. En effet, les mesures souples prises par les autorités permettent de voir si les modèlisations anticipent bien ce qu'il se passe en l'absence de mesures fortes. Se concentrer uniquement sur les résultats des modèles dans les pays où il y a eu des confinements n'apprend pas grand-chose. Voici un analogie pour bien comprendre.
+
+Un scientifique vient vous voir en vous disant qu'il a un superbe modèle mathématique pour décrire la chute des personnes: son modèle est formel, si vous sautez d'une table, il vous faut absolument un parachute, sans quoi vous mourrez écrasé au sol. Vous enfilez donc le parachute, sautez d'une hauteur vertigineuse d'1 mètre, et êtes sain et sauf. "Voilà la preuve que mon modèle est bon !".
+
+Bien entendu, cela n'a aucun sens. Si vous aviez sauté sans parachute, vous vous en seriez également très bien sorti, ce qui invalide le modèle. Remplacez parachute par confinement, et vous voyez la nécessité de s'intéresser à la Suède pour voir la pertinence des modèles.
+
+Pour pousser la métaphore, certains répliquent que la Suède n'a pas "rien fait" en terme de mesures sanitaires. Evidemment ! Mais il y a un monde entre l'assignation à résidence de l'ensemble de la population avec interdiction de se promener même sur un plage vide, des mesures légères, et "ne rien faire". Tout comme il y a un monde entre sauter à pieds joints de la table, sauter la tête la première les mains dans le dos, ou sauter avec un parachute. D'ailleurs les modèles ci-dessous tentent de prendre en compte les mesures légères prises par le pays, et obtiennent tout de même des résultats aberrants.
+
+# Brauner 2020, Science 
+
+## Présentation
+
+Nous analysons ici le papier de Brauner et al. (2020), [Inferring the effectiveness of government interventions against COVID-19](https://doi.org/10.1126/science.abd9338){target="_blank"} publié dans la prestigieux journal *Science*, et plus particulièrement les résultats présentés dans les [données supplémentaires](https://www.science.org/action/downloadSupplement?doi=10.1126%2Fscience.abd9338&file=abd9338_brauner_sm.pdf){target="_blank"}, p29.
+
+L'article a été publié en décembre 2020, et a été depuis cité près de 1000 fois. Son [preprint](https://www.medrxiv.org/content/10.1101/2020.05.28.20116129v1){target="_blank"} a lui été publié dès fin mai 2020, à la fin du premier confinement.
+
+## Résultats en Suède {.tabset .tabset-fade .tabset-pills}
+
+```{r prepare_Branuer_data_and_graphs}
+
+#from the paper SM
+#These are challenging predictions; to the best of our knowledge, no related study analyses how their estimated NPI effects generalise to unseen countries, and most related studies do not validate predictions on unseen data at all (3, 7, 8, 5, 6), reviewed in (10).
+
+#start date 2020-03-31
+Brauner_data <- read_csv("influence_models/Brauner_Science/brauner_Science.csv")
+  
+f_graph <- function(
+    dataset, y_max,
+    x_label_observation, y_label_observation,
+    x_label_reality, y_label_reality,
+    x_label_prediction, y_label_prediction,
+    x_label_start_prediction, y_label_start_prediction,
+    x_label_confidence_interval, y_label_confidence_interval
+    ){
+  gg <- ggplot(dataset, aes(x=date)) +
+    #confidence interval
+    geom_ribbon(
+      aes(ymin = model_low, ymax=model_high, fill="intervalle de\nconfiance"), 
+      fill='black',
+      alpha=.1
+      ) +
+    annotate(
+        'text', x = as.Date(x_label_confidence_interval), y = y_label_confidence_interval, label = "intervalle\nde confiance", 
+        color = "darkgray", fontface = "italic", family = "Times New Roman"
+      ) +
+    
+    #prediction + annotation
+    geom_line(
+      aes(y=model_median),
+      linewidth=2, color="gray"
+      ) +
+    annotate(
+      'text', x = as.Date(x_label_prediction), y = y_label_prediction, label = "Prédiction", 
+      color = "darkgray", fontface = "bold.italic", family = "Times New Roman", hjust=1
+      ) +
+    
+    #reality + annotation
+    geom_point(
+      data = dataset %>% filter(date>as.Date("2020-03-31")),
+      aes(y=reality),
+      color="#ff0000"
+      ) +
+    annotate(
+      'text', x = as.Date(x_label_reality), y = y_label_reality, label = "Réalité", 
+      color = "#ff0000", fontface = "bold.italic", family = "Times New Roman", hjust=0
+      ) +
+    
+    #observation dots + annotation
+    geom_point(
+      data = dataset %>% filter(date<=as.Date("2020-03-31")),
+      aes(y=reality),
+      color="black"
+      ) +
+    annotate(
+      'text', x = as.Date(x_label_observation)-1, y = y_label_observation, label = "Observations", 
+      color = "black", fontface = "bold.italic", family = "Times New Roman", hjust=1
+      ) +
+    
+    #prediction start + annotation
+    geom_segment(
+      x = as.Date("2020-03-31")+0.5,  xend = as.Date("2020-03-31")+0.5,  
+      y = 0, yend = y_label_start_prediction,
+      linetype="dashed"
+      ) +
+    annotate(
+      'text', x = as.Date(x_label_start_prediction)-1, y = y_label_start_prediction, label = "début de la\nprédiction",
+      color = "black", fontface = "italic", family = "Times New Roman", hjust=1, vjust=1
+      ) +
+    
+    #graph limits and colors
+    scale_y_continuous(labels = scales::label_number(drop0trailing = TRUE)) +
+    coord_cartesian(
+      ylim=c(0, y_max),
+      xlim=c(as.Date("2020-03-15"), as.Date("2020-05-25"))
+      ) +
+    
+    #labels
+    labs(
+      y="morts COVID par jour en Suède",
+      caption="Source:\nBrauner et al. (2020), Supplementary Materials, p29\nInferring the effectiveness of government interventions against COVID-19"
+      )
+  
+  return(gg)
+}
+```
+
+### Prédiction vs Réalité
+
+La "prédiction" (terme utilisé par les auteurs, cf onglet *Figure originale*) propose une croissance ininterrompue du nombre de morts quotidiens, atteignant plus de 6 000 morts par jour fin mai, et un total cumulé de plus de 100 000 décès. En réalité, le nombre de décès quotidien sera d'environ 100 par jour au pic épidémique, pour un cumul de 4 500 décès fin mai (cohéren avec les données reportées sur [ourworldindata](https://ourworldindata.org/explorers/coronavirus-data-explorer?zoomToSelection=true&time=2020-03-01..2020-06-08&facet=none&country=~SWE&pickerSort=asc&pickerMetric=location&Metric=Confirmed+deaths&Interval=Cumulative&Relative+to+Population=false&Color+by+test+positivity=false){target="_blank"}).
+
+Dans l'onglet *Zoom x10*, nous zoomons pour mieux voir la divergence entre la prédiction et la réalité.
+
+```{r graph_prediction}
+f_graph(
+  Brauner_data, y_max= 7000,
+  x_label_observation = "2020-03-31", y_label_observation = 300,
+  x_label_reality = "2020-05-05", y_label_reality = 300,
+  x_label_prediction = "2020-04-29", y_label_prediction = 1000,
+  x_label_start_prediction = "2020-03-31", 1900,
+  x_label_confidence_interval = "2020-04-13", y_label_confidence_interval = 5000
+  )
+```
+
+```{r results='hide'}
+#morts prédits sur la période, médiane : 100 000 morts
+sum(Brauner_data$model_median, na.rm=T)
+
+#morts sur la période, réalité : 4 500 morts
+sum(Brauner_data$reality, na.rm=T)
+```
+
+
+### Zoom x10
+
+Ici nous présentons la même figure qu'à l'onglet *Prédiction vs Réalité*, mais en zoomé x10. Cela permet de voir que la prédiction diverge complètement de la réalité stagnante après à peine 1 semaine.
+
+Le zoom permet de voir que la réalité correspond au bas de l'intervalle de confiance. On pourrait se dire que c'est la preuve que le modèle ne s'est pas trompé. Ce serait une interprétation très généreuse, car le haut de l'intervalle de confiance, qui sort ici du cadre, correspond à l'anéantissement de l'ensemble de la population Suédoise (cf onglet *Zoom out*).
+
+Un intervalle de confiance allant d'une épidémie faible à l'anéantissement de la population n'apporte aucune information exploitable, d'où notre choix de nous concentrer sur l'estimation centrale du modèle.
+
+```{r graph_prediction_zoomed}
+f_graph(
+  Brauner_data, y_max= 700,
+  x_label_observation = "2020-03-29", y_label_observation = 60,
+  x_label_reality = "2020-05-05", y_label_reality = 120,
+  x_label_prediction = "2020-04-20", y_label_prediction = 500,
+  x_label_start_prediction = "2020-03-31", y_label_start_prediction = 190,
+  x_label_confidence_interval = "2020-04-01", y_label_confidence_interval = 650
+)
+```
+
+```{r results='hide'}
+#morts sur la période, low
+sum(Brauner_data$model_low, na.rm=T)
+```
+
+
+### Zoom out
+
+Ici on voit que le haut de l'intervalle de confiance culmine à 1 million de morts par jour fin mai. Dans l'onglet *Figure originale*, on voit que cette borne haute sort du cadre du graphique à partir du 23 mai. A cette date, plus de 6 millions de Suédois seraient morts, soit plus de la moitié du pays de 10 millions d'habitants.
+
+Cela pose de sérieuses question quant au lien du modèle avec le monde réel, ainsi qu'à l'utilité de la prédiction, si l'intervalle de confiance peut couvrir une réalité aussi disparate.
+
+```{r graph_prediction_confidence_interval}
+f_graph(
+  Brauner_data, y_max= 1000000,
+  x_label_observation = "2020-03-31", y_label_observation = 30000,
+  x_label_reality = "2020-04-15", y_label_reality = 30000,
+  x_label_prediction = "2020-06-20", y_label_prediction = 500,
+  x_label_start_prediction = "2020-03-31", y_label_start_prediction = 190000,
+  x_label_confidence_interval = "2020-05-10", y_label_confidence_interval = 600000
+)
+```
+
+
+```{r results='hide'}
+#morts sur la période, high (before saturation on graph)
+sum(Brauner_data %>% filter(date<"2020-05-23") %>% pull(model_high), na.rm=T)/10^6
+```
+
+
+### Figure originale
+
+Voici la figure originale issue de l'article. L'axe verticale en échelle logarithmique, ce qui peut donner l'impression que la courbe de prédiction et la réalité sont proches. Dans nos graphes nous avons remis l'axe vertical en échelle linéaire.
+
+On voit sur le graphique les mesures prises en compte par les modélisateurs : interdiction des grands rassemblements de 1 000 puis 100 personnes, puis fermeture de certaines écoles et universités.
+
+```{r Brauner_orginal, out.width="500px"}
+knitr::include_graphics("influence_models/Brauner_Science/brauner_figS17.png")
+```
+
+
+## Impact médiatique et scientifique
+
+L'impact médiatique du preprint et de l'étude finale peuvent être vus sur Altmetric, [ici](https://www.altmetric.com/details/96027237/news){target="_blank"} et [ici.](https://medrxiv.altmetric.com/details/94013371/twitter){target="_blank"}. Cette section sera complété plus en détails par la suite. Une petite liste non exhaustive
+
+  -   [Cinq experts répondent à la question du rôle des écoles dans la propagation de l'épidémie](https://www.latribune.fr/opinions/tribunes/covid-cinq-experts-repondent-a-la-question-du-role-des-ecoles-dans-la-propagation-de-l-epidemie-881436.html){target="_blank"}
+  -   [Three years on, there is a new generation of lockdown sceptics – and they’re rewriting history](https://www.theguardian.com/commentisfree/2023/mar/23/lockdown-sceptics-history-academics-left-covid){target="_blank"}
+  -   [Aucune étude n’a appuyé le confinement ? Faux](https://www.sciencepresse.qc.ca/actualite/covid-19-depister-desinfo/2021/08/30/aucune-etude-appuye-confinement-faux){target="_blank"}
+
+
+
+# Flexman 2020, Nature
+
+A venir, mais un court résumé peut êre vu [ici](https://twitter.com/Covid_Scenarios/status/1579169204888305665){target="_blank"}.
+
+# Walker 2020, Science
+
+Plus de détails sur l'[étude](https://doi.org/10.1126/science.abc0035){target="_blank"} à venir, mais le résultat peut être vu sur notre [page principale](https://evaluation-modelisation-covid.github.io/france/#mars-2020-les-mod%C3%A9lisations-qui-ont-conduit-le-monde-%C3%A0-se-confiner){target="_blank"}, en *1. Mars 2020, les modélisations qui ont conduit le monde à se confiner*.
+
+

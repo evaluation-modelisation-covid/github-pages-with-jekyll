@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="generator" content="pandoc" />
+
+    
+    
+    <title>Influence des modèles</title>
+
+        <script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+        <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="site_libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="site_libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+        <script src="site_libs/navigation-1.1/tabsets.js"></script>
+        <link href="site_libs/downcute-0.1/downcute.css" rel="stylesheet" />
+        <link href="site_libs/downcute-0.1/downcute_fonts_embed.css" rel="stylesheet" />
+        <script src="site_libs/downcute-0.1/downcute_styles.js"></script>
+        <script src="site_libs/downcute-0.1/downcute.js"></script>
+        <script src="site_libs/prism-1.22/prism.js"></script>
+        <link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+        <link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+    
+    
+    
+        <link rel="stylesheet" href="styles.css" type="text/css" />
+    
+    <!-- tabsets -->
+    <script>
+      $(document).ready(function () {
+	  window.buildTabsets("toc");
+      });
+      $(document).ready(function () {
+	  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+	      $(this).parent().toggleClass('nav-tabs-open')
+	  });
+      });
+    </script>
+
+    <!-- code folding -->
+    
+    <!-- code download -->
+    
+    <!-- tabsets dropdown -->
+
+    <style type="text/css">
+      .tabset-dropdown > .nav-tabs {
+	  display: inline-table;
+	  max-height: 500px;
+	  min-height: 44px;
+	  overflow-y: auto;
+	  background: white;
+	  border: 1px solid #ddd;
+	  border-radius: 4px;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+	  content: "&#xe258;";
+	  border: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+	  content: "";
+	  font-family: 'Glyphicons Halflings';
+	  display: inline-block;
+	  padding: 10px;
+	  border-right: 1px solid #ddd;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li.active {
+	  display: block;
+      }
+
+      .tabset-dropdown > .nav-tabs > li.active a {
+  	  padding: 0 15px !important;
+      }
+
+      .tabset-dropdown > .nav-tabs > li > a,
+      .tabset-dropdown > .nav-tabs > li > a:focus,
+      .tabset-dropdown > .nav-tabs > li > a:hover {
+	  border: none;
+	  display: inline-block;
+	  border-radius: 4px;
+	  background-color: transparent;
+      }
+      
+      .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+	  display: block;
+	  float: none;
+      }
+      
+      .tabset-dropdown > .nav-tabs > li {
+	  display: none;
+	  margin-left: 0 !important;
+      }
+    </style>
+    
+</head>
+
+<body class="preload">
+
+   	
+               <!-- downcute start -->   
+   <div id="docute" class="Root theme-default">
+     <div class="Page layout-narrow">
+      <div class="Wrap">
+        <div class="Sidebar">
+          <div class="SidebarItems" id="toc">
+            <ul>
+            <li><a href="#brauner-2020-science"
+            id="toc-brauner-2020-science">Brauner 2020, Science</a>
+            <ul>
+            <li><a href="#présentation"
+            id="toc-présentation">Présentation</a></li>
+            <li><a href="#résultats-en-suède"
+            id="toc-résultats-en-suède">Résultats en Suède</a></li>
+            <li><a href="#impact-médiatique-et-scientifique"
+            id="toc-impact-médiatique-et-scientifique">Impact médiatique
+            et scientifique</a></li>
+            </ul></li>
+            <li><a href="#flexman-2020-nature"
+            id="toc-flexman-2020-nature">Flexman 2020, Nature</a></li>
+            <li><a href="#walker-2020-science"
+            id="toc-walker-2020-science">Walker 2020, Science</a></li>
+            </ul>
+          </div>
+          <div data-position="sidebar:post-end" class="InjectedComponents"><div class="dark-theme-toggler"><div class="toggle "><div class="toggle-track"><div class="toggle-track-check"><img  src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div> <div class="toggle-track-x"><img src="data:image/png;base64,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" role="presentation" style="pointer-events: none;" width="16" height="16"></div></div> <div class="toggle-thumb"></div></div> <input type="checkbox" aria-label="Switch between Dark and Default theme" class="toggler-screen-reader-only"></div></div>
+        </div>
+        <div class="Main">
+          <div class="Content" id="content"> 
+   
+   
+      
+      <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Covid Scénarios</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li>
+        <a href="index.html">Accueil</a>
+      </li>
+      <li>
+        <a href="influence_models.html">Influence des modèles</a>
+      </li>
+      <li>
+        <a href="methodology.html">Méthodologie</a>
+      </li>
+      <li>
+        <a href="process.html">Démarche</a>
+      </li>
+      <li>
+        <a href="impact.html">Impact</a>
+      </li>
+      <li>
+        <a href="contact.html">Contact</a>
+      </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li>
+        <a href="https://evaluation-modelisation-covid.github.io/france_eng/index.html">English</a>
+      </li>
+      <li>
+        <a href="https://twitter.com/Covid_Scenarios">
+          <span class="fa fa-twitter"></span>
+           
+        </a>
+      </li>
+      <li>
+        <a href="">
+          <span class="fa fa-github"></span>
+           
+        </a>
+      </li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container -->
+      </div><!--/.navbar -->
+        
+      <h1 class="title">Influence des modèles</h1>
+      
+      <p class="authors">
+              
+
+   
+      
+   
+<!-- Don't indent these lines or it will mess pre blocks indentation --> 
+<div class="page-content has-page-title">
+<p>Ici, nous revenons sur quelques articles publiés dans de
+presitgieuses revues scientifiques, qui ont eu une influence majeure sur
+la perception de l’efficacité des mesures sanitaires.</p>
+<p>Nous nous concentrons sur leurs prédictions relatives à la Suède. En
+effet, les mesures souples prises par les autorités permettent de voir
+si les modèlisations anticipent bien ce qu’il se passe en l’absence de
+mesures fortes. Se concentrer uniquement sur les résultats des modèles
+dans les pays où il y a eu des confinements n’apprend pas grand-chose.
+Voici un analogie pour bien comprendre.</p>
+<p>Un scientifique vient vous voir en vous disant qu’il a un superbe
+modèle mathématique pour décrire la chute des personnes: son modèle est
+formel, si vous sautez d’une table, il vous faut absolument un
+parachute, sans quoi vous mourrez écrasé au sol. Vous enfilez donc le
+parachute, sautez d’une hauteur vertigineuse d’1 mètre, et êtes sain et
+sauf. “Voilà la preuve que mon modèle est bon !”.</p>
+<p>Bien entendu, cela n’a aucun sens. Si vous aviez sauté sans
+parachute, vous vous en seriez également très bien sorti, ce qui
+invalide le modèle. Remplacez parachute par confinement, et vous voyez
+la nécessité de s’intéresser à la Suède pour voir la pertinence des
+modèles.</p>
+<p>Pour pousser la métaphore, certains répliquent que la Suède n’a pas
+“rien fait” en terme de mesures sanitaires. Evidemment ! Mais il y a un
+monde entre l’assignation à résidence de l’ensemble de la population
+avec interdiction de se promener même sur un plage vide, des mesures
+légères, et “ne rien faire”. Tout comme il y a un monde entre sauter à
+pieds joints de la table, sauter la tête la première les mains dans le
+dos, ou sauter avec un parachute. D’ailleurs les modèles ci-dessous
+tentent de prendre en compte les mesures légères prises par le pays, et
+obtiennent tout de même des résultats aberrants.</p>
+<div id="brauner-2020-science" class="section level1">
+<h1>Brauner 2020, Science</h1>
+<div id="présentation" class="section level2">
+<h2>Présentation</h2>
+<p>Nous analysons ici le papier de Brauner et al. (2020), <a
+href="https://doi.org/10.1126/science.abd9338" target="_blank">Inferring
+the effectiveness of government interventions against COVID-19</a>
+publié dans la prestigieux journal <em>Science</em>, et plus
+particulièrement les résultats présentés dans les <a
+href="https://www.science.org/action/downloadSupplement?doi=10.1126%2Fscience.abd9338&amp;file=abd9338_brauner_sm.pdf"
+target="_blank">données supplémentaires</a>, p29.</p>
+<p>L’article a été publié en décembre 2020, et a été depuis cité près de
+1000 fois. Son <a
+href="https://www.medrxiv.org/content/10.1101/2020.05.28.20116129v1"
+target="_blank">preprint</a> a lui été publié dès fin mai 2020, à la fin
+du premier confinement.</p>
+</div>
+<div id="résultats-en-suède"
+class="section level2 tabset tabset-fade tabset-pills">
+<h2 class="tabset tabset-fade tabset-pills">Résultats en Suède</h2>
+<div id="prédiction-vs-réalité" class="section level3">
+<h3>Prédiction vs Réalité</h3>
+<p>La “prédiction” (terme utilisé par les auteurs, cf onglet <em>Figure
+originale</em>) propose une croissance ininterrompue du nombre de morts
+quotidiens, atteignant plus de 6 000 morts par jour fin mai, et un total
+cumulé de plus de 100 000 décès. En réalité, le nombre de décès
+quotidien sera d’environ 100 par jour au pic épidémique, pour un cumul
+de 4 500 décès fin mai (cohéren avec les données reportées sur <a
+href="https://ourworldindata.org/explorers/coronavirus-data-explorer?zoomToSelection=true&amp;time=2020-03-01..2020-06-08&amp;facet=none&amp;country=~SWE&amp;pickerSort=asc&amp;pickerMetric=location&amp;Metric=Confirmed+deaths&amp;Interval=Cumulative&amp;Relative+to+Population=false&amp;Color+by+test+positivity=false"
+target="_blank">ourworldindata</a>).</p>
+<p>Dans l’onglet <em>Zoom x10</em>, nous zoomons pour mieux voir la
+divergence entre la prédiction et la réalité.</p>
+<p><img src="influence_models_files/figure-html/graph_prediction-1.svg" width="499.2" style="display: block; margin: auto;" /></p>
+</div>
+<div id="zoom-x10" class="section level3">
+<h3>Zoom x10</h3>
+<p>Ici nous présentons la même figure qu’à l’onglet <em>Prédiction vs
+Réalité</em>, mais en zoomé x10. Cela permet de voir que la prédiction
+diverge complètement de la réalité stagnante après à peine 1
+semaine.</p>
+<p>Le zoom permet de voir que la réalité correspond au bas de
+l’intervalle de confiance. On pourrait se dire que c’est la preuve que
+le modèle ne s’est pas trompé. Ce serait une interprétation très
+généreuse, car le haut de l’intervalle de confiance, qui sort ici du
+cadre, correspond à l’anéantissement de l’ensemble de la population
+Suédoise (cf onglet <em>Zoom out</em>).</p>
+<p>Un intervalle de confiance allant d’une épidémie faible à
+l’anéantissement de la population n’apporte aucune information
+exploitable, d’où notre choix de nous concentrer sur l’estimation
+centrale du modèle.</p>
+<p><img src="influence_models_files/figure-html/graph_prediction_zoomed-1.svg" width="499.2" style="display: block; margin: auto;" /></p>
+</div>
+<div id="zoom-out" class="section level3">
+<h3>Zoom out</h3>
+<p>Ici on voit que le haut de l’intervalle de confiance culmine à 1
+million de morts par jour fin mai. Dans l’onglet <em>Figure
+originale</em>, on voit que cette borne haute sort du cadre du graphique
+à partir du 23 mai. A cette date, plus de 6 millions de Suédois seraient
+morts, soit plus de la moitié du pays de 10 millions d’habitants.</p>
+<p>Cela pose de sérieuses question quant au lien du modèle avec le monde
+réel, ainsi qu’à l’utilité de la prédiction, si l’intervalle de
+confiance peut couvrir une réalité aussi disparate.</p>
+<p><img src="influence_models_files/figure-html/graph_prediction_confidence_interval-1.svg" width="499.2" style="display: block; margin: auto;" /></p>
+</div>
+<div id="figure-originale" class="section level3">
+<h3>Figure originale</h3>
+<p>Voici la figure originale issue de l’article. L’axe verticale en
+échelle logarithmique, ce qui peut donner l’impression que la courbe de
+prédiction et la réalité sont proches. Dans nos graphes nous avons remis
+l’axe vertical en échelle linéaire.</p>
+<p>On voit sur le graphique les mesures prises en compte par les
+modélisateurs : interdiction des grands rassemblements de 1 000 puis 100
+personnes, puis fermeture de certaines écoles et universités.</p>
+<p><img src="influence_models/Brauner_Science/brauner_figS17.png" width="500px" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="impact-médiatique-et-scientifique" class="section level2">
+<h2>Impact médiatique et scientifique</h2>
+<p>L’impact médiatique du preprint et de l’étude finale peuvent être vus
+sur Altmetric, <a href="https://www.altmetric.com/details/96027237/news"
+target="_blank">ici</a> et <a
+href="https://medrxiv.altmetric.com/details/94013371/twitter"
+target="_blank">ici.</a>. Cette section sera complété plus en détails
+par la suite. Une petite liste non exhaustive</p>
+<ul>
+<li><a
+href="https://www.latribune.fr/opinions/tribunes/covid-cinq-experts-repondent-a-la-question-du-role-des-ecoles-dans-la-propagation-de-l-epidemie-881436.html"
+target="_blank">Cinq experts répondent à la question du rôle des écoles
+dans la propagation de l’épidémie</a></li>
+<li><a
+href="https://www.theguardian.com/commentisfree/2023/mar/23/lockdown-sceptics-history-academics-left-covid"
+target="_blank">Three years on, there is a new generation of lockdown
+sceptics – and they’re rewriting history</a></li>
+<li><a
+href="https://www.sciencepresse.qc.ca/actualite/covid-19-depister-desinfo/2021/08/30/aucune-etude-appuye-confinement-faux"
+target="_blank">Aucune étude n’a appuyé le confinement ? Faux</a></li>
+</ul>
+</div>
+</div>
+<div id="flexman-2020-nature" class="section level1">
+<h1>Flexman 2020, Nature</h1>
+<p>A venir, mais un court résumé peut êre vu <a
+href="https://twitter.com/Covid_Scenarios/status/1579169204888305665"
+target="_blank">ici</a>.</p>
+</div>
+<div id="walker-2020-science" class="section level1">
+<h1>Walker 2020, Science</h1>
+<p>Plus de détails sur l’<a
+href="https://doi.org/10.1126/science.abc0035" target="_blank">étude</a>
+à venir, mais le résultat peut être vu sur notre <a
+href="https://evaluation-modelisation-covid.github.io/france/#mars-2020-les-mod%C3%A9lisations-qui-ont-conduit-le-monde-%C3%A0-se-confiner"
+target="_blank">page principale</a>, en <em>1. Mars 2020, les
+modélisations qui ont conduit le monde à se confiner</em>.</p>
+</div>
+</div>
+
+   
+      <p>Contactez-nous via <a href="mailto:%20evaluation.modelisations.covid@gmail.com">email</a> or <a href="https://twitter.com/Covid_Scenarios">twitter</a></p>
+   
+              </div>
+  </div>
+  </div>
+  </div>
+   
+      
+
+  <script>
+    $(document).ready(function () {
+
+		// add bootstrap table styles to pandoc tables
+	$('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+		
+ 		
+	    });
+  </script>
+
+
+
+    <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+	document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+  
+</body>
+</html>

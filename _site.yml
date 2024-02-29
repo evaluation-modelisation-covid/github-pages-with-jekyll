@@ -5,6 +5,8 @@ navbar:
   left:
     - text: "Accueil"
       href: index.html
+    - text: "Influence des modèles"
+      href: influence_models.html
     - text: "Méthodologie"
       href: methodology.html
     - text: "Démarche"
