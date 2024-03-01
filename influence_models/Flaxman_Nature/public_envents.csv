@@ -1,0 +1,12 @@
+country_french,country_eng,high_Rt_before,high_Rt_after,low_Rt_before,low_Rt_after,high_Rt_reduction,low_Rt_reduction,median_Rt_reduction,NPI
+France,France,5.19,5.13,3.95,3.77,-0.0115606936416186,-0.0455696202531646,-0.0285651569473916,public events bannned
+Italie,Italy,3.74,3.65,2.95,2.58,-0.0240641711229947,-0.125423728813559,-0.074743949968277,public events bannned + self isolation + social distancing
+Espagne,Spain,NA,NA,NA,NA,NA,NA,NA,public events bannned + complete lockdown
+Royaume-Uni,UK,NA,NA,NA,NA,NA,NA,NA,public events bannned + complete lockdown
+Belgique,Belgium,6.59,6.54,4,3.89,-0.00758725341426401,-0.0275,-0.017543626707132,public events bannned
+Allemagne,Germany,NA,NA,NA,NA,NA,NA,NA,public events bannned + complete lockdown
+Suède,Sweden,3,0.92,2.22,0.53,-0.693333333333333,-0.761261261261261,-0.727297297297297,public events bannned
+Suisse,Switzerland,3.93,3.86,2.65,2.57,-0.0178117048346057,-0.030188679245283,-0.0240001920399444,public events bannned
+Autriche,Austria,5.32,5.29,2.91,2.81,-0.00563909774436095,-0.0343642611683849,-0.0200016794563729,public events bannned
+Norvège,Norway,4.14,4.05,2.21,2.19,-0.0217391304347826,-0.00904977375565612,-0.0153944520952193,public events bannned
+Danemark,Denmark,4.83,4.73,2.58,2.49,-0.0207039337474119,-0.0348837209302325,-0.0277938273388222,public events bannned + self isolation + social distancing

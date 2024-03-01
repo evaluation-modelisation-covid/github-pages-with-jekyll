@@ -226,9 +226,86 @@ L'impact médiatique du preprint et de l'étude finale peuvent être vus sur Alt
 
 
 
-# Flexman 2020, Nature
+# Flaxman 2020, Nature
 
 A venir, mais un court résumé peut êre vu [ici](https://twitter.com/Covid_Scenarios/status/1579169204888305665){target="_blank"}.
+
+```{r}
+Flaxman_lockdown <- read_csv("influence_models/Flaxman_Nature/lockdown_effects.csv")
+Flaxman_public_events <- read_csv("influence_models/Flaxman_Nature/public_envents.csv")
+
+lockdown_effect <- Flaxman_lockdown %>% 
+  select(country_french, median_reduction = median) %>%
+  filter(country_french!="Tous les pays") %>%
+  mutate(
+    NPI = "Confinement"
+  )
+
+
+public_events_effect <- Flaxman_public_events %>% 
+  select(country_french, median_reduction = median_Rt_reduction) %>%
+  mutate(
+    median_reduction = -median_reduction,
+    NPI = "Interdiction des Grands Rassemblements"
+    ) %>%
+  filter(
+    country_french !="Italie"
+  )
+
+temp <- bind_rows(
+  lockdown_effect, public_events_effect
+) %>%
+  mutate(
+    col= case_when(
+      country_french == "Suède" ~ "Suède",
+      T ~ "other"
+    )
+  )
+  
+
+annotation_data <- 
+  data.frame(
+    NPI = c("Confinement", "Interdiction des Grands Rassemblements", "Interdiction des Grands Rassemblements"), 
+    country_french = c("France", "Espagne", "Royaume-Uni"),
+    median_reduction = c(0.93, 0.13, 0.65), 
+    lab = c(
+      "efficacité confinement\n~ 75%", 
+      "efficacité interdiction\nrassemblements\n~ 2%", 
+      "à en croire le modèle,\ninterdire les grands\nrassemblements en Suède\nest 30 fois plus efficace\nque dans les autres pays,\net a un effet similaire\nà un confinement"
+      ),
+    col=c("other", "other", "Suède"),
+    hjust=c(NA, NA, 1)
+  )
+
+
+ggplot(temp) +
+  geom_col(
+    aes(
+      country_french, median_reduction, 
+      fill=col)
+    ) +
+  scale_y_continuous(
+    labels = scales::percent_format(),
+    lim=c(0,1)
+    ) +
+  geom_text(
+    data=annotation_data, aes(x=country_french, y=median_reduction, label=lab, color=col, hjust=hjust),
+    fontface = "bold.italic", family = "Times New Roman"
+  ) +
+  labs(
+    y="réduction de la\npropogation épidémique",
+    caption="Source:\nFlaxman (2020), Estimating the effects of non-pharmaceutical interventions on COVID-19 in Europe\nExctracted fromFig 1, Extended Data Fig. 1-2, Supplementary Fig. 29",
+    title="Efficacité des mesures sanitaires dans différents pays\nselon le modèle"
+  ) +
+  facet_grid(~NPI) +
+  scale_fill_manual(values = c("#b4b4b4", "#ff0000")) +
+  scale_color_manual(values = c("#b4b4b4", "#ff0000")) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust=1),
+    legend.position = "none"
+    )
+```
+
 
 # Walker 2020, Science
 
